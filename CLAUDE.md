@@ -76,4 +76,4 @@ Note display: internal storage uses sharps only (`ALL_NOTES`). `NOTE_DISPLAY` ma
 
 ### CAGED shape names
 
-Box 1 = A shape, Box 2 = G shape, Box 3 = E shape, Box 4 = D shape, Box 5 = C shape.
+Box 1 = E shape, Box 2 = G shape, Box 3 = D shape, Box 4 = A shape, Box 5 = C shape.

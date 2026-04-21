@@ -16,7 +16,7 @@ interface Props {
   exercise: ExerciseInstance
 }
 
-const CAGED_SHAPES = ['', 'A shape', 'G shape', 'E shape', 'D shape', 'C shape']
+const CAGED_SHAPES = ['', 'E shape', 'G shape', 'D shape', 'A shape', 'C shape']
 const ALL_KEYS = ['A', 'A#', 'B', 'C', 'C#', 'D', 'D#', 'E', 'F', 'F#', 'G', 'G#']
 
 function getModeInstructions(

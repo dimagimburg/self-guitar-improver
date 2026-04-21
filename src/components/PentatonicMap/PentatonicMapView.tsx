@@ -3,7 +3,7 @@ import { Fretboard, ColoredPosition } from '../Fretboard/Fretboard'
 import { getAllPentatonicPositions, getNoteAtFret, STANDARD_TUNING, NOTE_DISPLAY, ALL_NOTES } from '../../data/notes'
 
 const ALL_KEYS = ALL_NOTES
-const CAGED_SHAPES = ['', 'A shape', 'G shape', 'E shape', 'D shape', 'C shape']
+const CAGED_SHAPES = ['', 'E shape', 'G shape', 'D shape', 'A shape', 'C shape']
 
 type ScaleType = 'minor' | 'major'
 

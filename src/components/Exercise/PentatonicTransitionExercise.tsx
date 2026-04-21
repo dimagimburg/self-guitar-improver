@@ -14,7 +14,7 @@ interface Props {
   exercise: ExerciseInstance
 }
 
-const CAGED_SHAPES = ['', 'A shape', 'G shape', 'E shape', 'D shape', 'C shape']
+const CAGED_SHAPES = ['', 'E shape', 'G shape', 'D shape', 'A shape', 'C shape']
 
 // CAGED sequence going up the neck: C(5) → A(1) → G(2) → E(3) → D(4) → C(5)
 const CAGED_TRANSITIONS = [
