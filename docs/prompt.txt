@@ -1,0 +1,267 @@
+You are a senior full-stack engineer. Your goal is to scaffold a production-quality MVP for a personal guitar training web app.
+
+The app must be clean, minimal, and extensible. Do not over-engineer, but do not cut corners in architecture.
+
+---
+
+## 🧩 Product Overview
+
+Build a web application that generates a **daily 30-minute guitar practice session** focused on:
+
+1. Fretboard mastery
+2. Pentatonic scale fluency
+
+The app should:
+
+* Present a structured session (fixed time blocks)
+* Adapt difficulty based on user feedback (Easy / Medium / Hard / Skipped)
+* Include a visual fretboard
+* Include a metronome and timer per exercise
+
+No authentication is required. Single-user app using local storage.
+
+---
+
+## 🏗️ Tech Stack
+
+Use:
+
+* React (with Vite)
+* TypeScript
+* Zustand (state management)
+* TailwindCSS (styling)
+* Web Audio API (for metronome)
+
+---
+
+## 📁 Project Structure
+
+Create a clean, scalable structure:
+
+src/
+app/
+App.tsx
+routes/
+components/
+Fretboard/
+Metronome/
+Timer/
+Exercise/
+Session/
+features/
+session/
+exercises/
+skills/
+store/
+hooks/
+utils/
+types/
+data/
+
+---
+
+## 🧠 Core Concepts to Implement
+
+---
+
+### 1. Session System
+
+Implement a session generator that returns:
+
+type Session = {
+exercises: ExerciseInstance[]
+totalDuration: number
+}
+
+type ExerciseInstance = {
+id: string
+type: 'fretboard_note' | 'pentatonic_position' | 'pentatonic_transition'
+duration: number
+params: Record<string, any>
+}
+
+Create a function:
+
+generateDailySession(state): Session
+
+For now:
+
+* Hardcode logic but structure it so it’s easily extendable
+
+---
+
+### 2. Exercise System
+
+Define exercise templates:
+
+* Fretboard Note Finding
+* Pentatonic Position
+* Pentatonic Transition
+
+Each should:
+
+* Accept parameters (note, bpm, position, etc.)
+* Render UI accordingly
+
+Create a generic:
+
+<ExerciseRenderer exercise={exercise} />
+
+---
+
+### 3. Fretboard Component
+
+Build a reusable fretboard component:
+
+Props:
+
+* highlightedNotes: string[]
+* showLabels: boolean
+* tuning: standard
+
+Requirements:
+
+* Render strings + frets (0–12)
+* Highlight notes
+* Clean visual grid (not realistic guitar)
+
+---
+
+### 4. Metronome
+
+Implement using Web Audio API:
+
+Features:
+
+* BPM control
+* Start / Stop
+* Simple click sound
+
+---
+
+### 5. Timer
+
+Simple countdown timer:
+
+Props:
+
+* duration (seconds)
+* onComplete callback
+
+---
+
+### 6. Session Flow UI
+
+Flow:
+
+1. Start screen:
+
+   * "Start Today’s Session"
+
+2. Exercise screen:
+
+   * Instructions
+   * Fretboard (if needed)
+   * Timer
+   * Metronome (if needed)
+   * "Next" button
+
+3. Feedback screen:
+
+   * Easy / Medium / Hard / Skipped
+
+4. Next exercise...
+
+---
+
+### 7. State Management (Zustand)
+
+Store:
+
+type AppState = {
+currentSession: Session | null
+currentExerciseIndex: number
+history: ExerciseResult[]
+skills: {
+fretboard: number
+pentatonic: number
+}
+
+startSession: () => void
+completeExercise: (result) => void
+nextExercise: () => void
+}
+
+Persist to localStorage.
+
+---
+
+### 8. Adaptation Logic (Basic)
+
+Implement simple rules:
+
+* Track last 2 results per exercise type
+* If "Easy" twice → increase difficulty
+* If "Hard" → decrease difficulty
+* Store per skill
+
+Keep logic simple but modular.
+
+---
+
+### 9. Styling
+
+Use Tailwind:
+
+* Dark theme
+* Minimal UI
+* Centered layout
+* Large fretboard
+* Clear CTA buttons
+
+---
+
+## 🚀 Deliverables
+
+Generate:
+
+1. Full project scaffold
+2. Core components implemented
+3. Working session flow
+4. At least:
+
+   * 1 fretboard exercise
+   * 1 pentatonic exercise
+5. Basic metronome + timer working
+
+---
+
+## ⚠️ Constraints
+
+* No backend
+* No authentication
+* No external UI libraries beyond Tailwind
+* Keep code readable and modular
+
+---
+
+## 💡 Quality Bar
+
+* Code should be clean and typed
+* Components reusable
+* No unnecessary complexity
+* Easy to extend with new exercises
+
+---
+
+## 🎯 Bonus (if time permits)
+
+* Simple progress indicator
+* Persist last session
+
+---
+
+Start by scaffolding the project, then implement features incrementally.
+
+Explain decisions briefly, but prioritize writing working code.
+

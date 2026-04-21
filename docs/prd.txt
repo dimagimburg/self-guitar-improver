@@ -1,0 +1,271 @@
+📄 PRD: Personal Guitar Training Web App (V1)
+1. Overview
+
+A personal web application that generates a daily 30-minute structured guitar practice session, focused on:
+
+Fretboard mastery
+Pentatonic fluency
+
+The app adapts difficulty over time using simple self-feedback, while maintaining a fixed, predictable session structure to reduce friction and improve consistency.
+
+2. Goals
+Primary Goals
+Enable daily consistent practice with zero planning overhead
+Improve:
+Instant fretboard note recognition
+Pentatonic fluency across the neck (not box-locked)
+Success Criteria (after ~30 days)
+User can locate any note on the fretboard quickly
+User can move between pentatonic positions without hesitation
+User practices at least 5 times per week
+User perceives visible progress
+3. Non-Goals (V1)
+No authentication system (single user, local storage)
+No mobile optimization
+No AI-generated exercises
+No audio analysis (no microphone input)
+No advanced theory or improvisation modules (later phases)
+4. Core Concept
+Structured Adaptive Practice
+Fixed daily structure (same time blocks)
+Exercises dynamically adjusted based on:
+Past performance
+Self-reported difficulty
+5. Daily Session Structure
+
+Total: 30 minutes
+
+Fretboard Training (5 min)
+Fretboard Training (5 min) (variation)
+Pentatonic Practice (10 min)
+Pentatonic Practice (5 min) (variation)
+Review / Repeat Weak Area (5 min)
+
+👉 Theory and improvisation intentionally excluded from V1
+
+6. Core Features
+6.1 Daily Session Generator
+Description
+
+Generates a full session when user opens the app.
+
+Input
+Skill levels (internal)
+Past exercise results
+Exercise history
+Output
+Ordered list of exercises
+Each with:
+Type
+Parameters (note, key, tempo, position)
+Duration
+6.2 Exercise Engine
+
+Exercises are defined as templates with variables
+
+Exercise Type 1: Fretboard Note Finding
+
+Goal: Know all notes instantly
+
+Parameters:
+
+Target note (e.g. A, C#, F)
+Scope:
+Full neck / limited strings
+Time per round (e.g. 60 sec)
+
+UI Behavior:
+
+Show empty fretboard
+Show target note
+User mentally or physically finds notes on guitar
+“Reveal” button shows correct positions
+Exercise Type 2: Fretboard Recall (Visual Aid)
+
+Goal: Reinforce mapping
+
+UI:
+
+Show fretboard
+Highlight notes after reveal
+Toggle show/hide
+Exercise Type 3: Pentatonic Position Practice
+
+Goal: Build muscle memory
+
+Parameters:
+
+Key (e.g. A minor)
+Position (box 1, box 2, etc.)
+BPM
+
+UI:
+
+Show scale diagram on fretboard
+Metronome active
+Instruction:
+Ascend/descend
+Exercise Type 4: Pentatonic Transition
+
+Goal: Break box limitation
+
+Parameters:
+
+From position → To position
+BPM
+
+UI:
+
+Highlight both shapes
+Indicate transition area
+Exercise Type 5: Speed / Tempo Progression
+
+Goal: Gradually increase fluency
+
+Logic:
+
+Start at comfortable BPM
+Increase based on performance
+6.3 Visual Fretboard Component
+Requirements
+Horizontal guitar neck (standard tuning)
+Frets (0–12 minimum)
+Strings labeled
+Ability to:
+Highlight notes
+Highlight scale shapes
+Toggle visibility (show/hide)
+Overlay multiple patterns (for transitions)
+Design Decision
+
+👉 Use clean abstract UI, not photorealistic
+
+6.4 Practice Player
+
+Each exercise screen includes:
+
+Timer (countdown)
+Metronome (BPM control)
+Instructions (clear, minimal)
+“Reveal” button (when relevant)
+“Next” button
+6.5 Feedback System (Critical)
+
+After each exercise:
+
+User selects:
+
+Easy
+Medium
+Hard
+Skipped
+
+Stored per exercise instance.
+
+6.6 Adaptation Logic (V1 Simple Rules)
+
+Per exercise type:
+
+If Easy twice in a row
+Increase difficulty:
+Fretboard:
+Faster time / more notes
+Pentatonic:
+Increase BPM
+Add transitions
+If Hard
+Repeat similar exercise next session
+Reduce difficulty slightly
+If Skipped
+Lower difficulty
+Reintroduce later
+6.7 Skill Model (Internal Only)
+
+User does NOT see this.
+
+Fretboard:
+  level: 1–10
+
+Pentatonic:
+  level: 1–10
+
+Each updated based on:
+
+Feedback trends
+Completion consistency
+6.8 Review Block Logic (Last 5 min)
+
+Automatically selects:
+
+The hardest exercise from current session
+OR
+Weakest skill area
+7. Data Storage
+
+Use local storage:
+
+{
+  "history": [],
+  "skillLevels": {
+    "fretboard": 3,
+    "pentatonic": 2
+  },
+  "lastSession": {...}
+}
+8. UX Flow
+Entry
+User opens app
+Sees:
+“Start Today’s Session” button
+Optional: last progress summary
+Session Flow
+
+For each exercise:
+
+Instruction screen
+User presses “Start”
+Timer + metronome runs
+User practices
+Click “Next”
+Rate difficulty
+Move to next exercise
+Completion
+
+Show summary:
+
+Completed exercises
+Weakest area
+Suggested focus next session
+9. UI Principles
+Minimal, distraction-free
+One task at a time
+Large fretboard visualization
+Dark theme preferred
+Fast loading, no friction
+10. Future Phases (Not in V1)
+Improvisation module (backing tracks)
+Ear training
+Theory integration
+Audio input analysis
+Mobile support
+AI-generated exercises
+11. Suggested Tech Stack (optional)
+Frontend: React + TypeScript
+State: simple context or Zustand
+Storage: localStorage
+Audio:
+Web Audio API for metronome
+12. Key Insight (don’t ignore this)
+
+This app will succeed only if:
+
+Opening it = immediate action (no thinking)
+Difficulty feels just slightly challenging
+You can see improvement over time
+
+If it becomes:
+
+Repetitive without progression
+Or too hard
+
+You will drop it, guaranteed.
