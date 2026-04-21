@@ -5,6 +5,15 @@ import { getAllPentatonicPositions, getNoteAtFret, STANDARD_TUNING, NOTE_DISPLAY
 const ALL_KEYS = ALL_NOTES
 const CAGED_SHAPES = ['', 'A shape', 'G shape', 'E shape', 'D shape', 'C shape']
 
+type ScaleType = 'minor' | 'major'
+
+// Major pentatonic of key X = same shapes as relative minor (3 semitones below X)
+function getPatternKey(selectedKey: string, scaleType: ScaleType): string {
+  if (scaleType === 'minor') return selectedKey
+  const idx = ALL_NOTES.indexOf(selectedKey)
+  return ALL_NOTES[(idx - 3 + 12) % 12]
+}
+
 const BOX_STYLES: Record<number, { bg: string; text: string; ring: string }> = {
   1: { bg: 'bg-emerald-500', text: 'text-emerald-400', ring: 'ring-emerald-300' },
   2: { bg: 'bg-blue-500',    text: 'text-blue-400',    ring: 'ring-blue-300'    },
@@ -19,6 +28,7 @@ interface Props {
 
 export function PentatonicMapView({ onBack }: Props) {
   const [selectedKey, setSelectedKey] = useState('A')
+  const [scaleType, setScaleType] = useState<ScaleType>('minor')
   const [visibleBoxes, setVisibleBoxes] = useState<number[]>([1, 2, 3, 4, 5])
   const [showLabels, setShowLabels] = useState(true)
 
@@ -29,12 +39,13 @@ export function PentatonicMapView({ onBack }: Props) {
   }
 
   const coloredPositions = useMemo<ColoredPosition[]>(() => {
+    const patternKey = getPatternKey(selectedKey, scaleType)
     const seen = new Set<string>()
     const result: ColoredPosition[] = []
 
     for (const boxNum of [1, 2, 3, 4, 5]) {
       if (!visibleBoxes.includes(boxNum)) continue
-      const positions = getAllPentatonicPositions(selectedKey, boxNum)
+      const positions = getAllPentatonicPositions(patternKey, boxNum)
       for (const { string, fret } of positions) {
         const key = `${string}-${fret}`
         if (seen.has(key)) continue
@@ -51,7 +62,7 @@ export function PentatonicMapView({ onBack }: Props) {
       }
     }
     return result
-  }, [selectedKey, visibleBoxes, showLabels])
+  }, [selectedKey, scaleType, visibleBoxes, showLabels])
 
   return (
     <div className="flex flex-col min-h-screen bg-gray-900 text-white p-6 max-w-4xl mx-auto">
@@ -67,6 +78,23 @@ export function PentatonicMapView({ onBack }: Props) {
           <h1 className="text-xl font-bold text-white">Pentatonic Scale Map</h1>
           <p className="text-gray-500 text-xs">All 5 boxes on one neck</p>
         </div>
+      </div>
+
+      {/* Minor / Major toggle */}
+      <div className="mb-4 flex gap-2">
+        {(['minor', 'major'] as ScaleType[]).map(t => (
+          <button
+            key={t}
+            onClick={() => setScaleType(t)}
+            className={`px-5 py-1.5 rounded-lg text-sm font-semibold transition-colors capitalize ${
+              scaleType === t
+                ? 'bg-white text-gray-900'
+                : 'bg-gray-700 text-gray-400 hover:text-white'
+            }`}
+          >
+            {t === 'minor' ? 'Minor' : 'Major'}
+          </button>
+        ))}
       </div>
 
       {/* Key selector */}
@@ -141,7 +169,7 @@ export function PentatonicMapView({ onBack }: Props) {
         ))}
         <span className="flex items-center gap-1.5 text-sm">
           <span className="w-3 h-3 rounded-full inline-block bg-gray-400 ring-2 ring-white ring-offset-1 ring-offset-gray-900" />
-          <span className="text-gray-400">Root ({NOTE_DISPLAY[selectedKey] ?? selectedKey})</span>
+          <span className="text-gray-400">Root — {NOTE_DISPLAY[selectedKey] ?? selectedKey} {scaleType === 'minor' ? 'Minor' : 'Major'}</span>
         </span>
       </div>
     </div>
