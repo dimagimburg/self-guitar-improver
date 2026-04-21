@@ -18,7 +18,7 @@ const PENTA_TRANSITION_EXERCISE: ExerciseInstance = {
   id: 'free-penta-trans',
   type: 'pentatonic_transition',
   duration: 0,
-  params: { fromKey: 'A', toKey: 'E', fromPosition: 1, toPosition: 2, bpm: 80 },
+  params: { key: 'A', fromPosition: 1, toPosition: 2, bpm: 80 },
 }
 
 const FRETBOARD_EXERCISE: ExerciseInstance = {
@@ -116,13 +116,13 @@ export function FreePracticeView({ onBack }: Props) {
       <div className="flex flex-col gap-4">
         <Card
           title="Pentatonic Position"
-          description="Pick any key and box shape (A–G shape) to drill ascending, descending, or alternating runs."
+          description="Pick any key and CAGED shape to drill ascending, descending, or alternating runs."
           accent="text-emerald-400"
           onClick={() => setMode('pentatonic_position')}
         />
         <Card
           title="Pentatonic Transition"
-          description="Choose two keys and box shapes to practice moving between positions with the sequencer."
+          description="Choose a key and two CAGED shapes to practice moving between them up the neck."
           accent="text-blue-400"
           onClick={() => setMode('pentatonic_transition')}
         />

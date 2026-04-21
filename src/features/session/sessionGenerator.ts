@@ -158,32 +158,37 @@ function makePentatonicExercise(
   return { id: uuidv4(), type: 'pentatonic_position', duration, params }
 }
 
+// CAGED transitions (same key, adjacent shapes going up the neck)
+const CAGED_TRANSITIONS = [
+  { from: 5, to: 1 },
+  { from: 1, to: 2 },
+  { from: 2, to: 3 },
+  { from: 3, to: 4 },
+  { from: 4, to: 5 },
+]
+
 // --- Build a transition exercise ---
 
 function makeTransitionExercise(
   skill: number,
   history: ExerciseResult[],
-  duration: number,
-  fromPosition: number,
-  toPosition: number
+  duration: number
 ): ExerciseInstance {
   const KEYS = ['C', 'C#', 'D', 'D#', 'E', 'F', 'F#', 'G', 'G#', 'A', 'A#', 'B'] as const
-  const validFromKeys = KEYS.filter(k => isPentatonicBoxValid(k, fromPosition))
-  const fromKey = weightedRandomFrom(validFromKeys.length > 0 ? validFromKeys : [...KEYS], history, r => r.key)
-  const validToKeys = KEYS.filter(k => isPentatonicBoxValid(k, toPosition) && k !== fromKey)
-  const toKey = validToKeys.length > 0
-    ? weightedRandomFrom(validToKeys, history, r => r.key)
-    : KEYS.filter(k => k !== fromKey)[Math.floor(Math.random() * (KEYS.length - 1))]
+  const trans = CAGED_TRANSITIONS[Math.floor(Math.random() * CAGED_TRANSITIONS.length)]
+  const validKeys = KEYS.filter(k =>
+    isPentatonicBoxValid(k, trans.from) && isPentatonicBoxValid(k, trans.to)
+  )
+  const key = weightedRandomFrom(validKeys.length > 0 ? validKeys : [...KEYS], history, r => r.key)
 
   return {
     id: uuidv4(),
     type: 'pentatonic_transition',
     duration,
     params: {
-      fromKey,
-      toKey,
-      fromPosition,
-      toPosition,
+      key,
+      fromPosition: trans.from,
+      toPosition: trans.to,
       bpm: Math.max(60, getBaseBpm(skill) - 10),
     },
   }
@@ -241,12 +246,8 @@ export function generateDailySession(skills: SkillState, history: ExerciseResult
       case 'penta_secondary':
         return makePentatonicExercise(pentatonic, history, dur, Math.min(position + 1, 5))
       case 'transition':
-      case 'transition2': {
-        const allPos = [1, 2, 3, 4, 5]
-        const fromPos = allPos[Math.floor(Math.random() * allPos.length)]
-        const toPos = allPos.filter(p => p !== fromPos)[Math.floor(Math.random() * 4)]
-        return makeTransitionExercise(pentatonic, history, dur, fromPos, toPos)
-      }
+      case 'transition2':
+        return makeTransitionExercise(pentatonic, history, dur)
     }
   })
 

@@ -3,8 +3,7 @@ import { Fretboard, ColoredPosition } from '../Fretboard/Fretboard'
 import { getAllPentatonicPositions, getNoteAtFret, STANDARD_TUNING, NOTE_DISPLAY, ALL_NOTES } from '../../data/notes'
 
 const ALL_KEYS = ALL_NOTES
-const POSITION_NAMES = ['', 'Box 1', 'Box 2', 'Box 3', 'Box 4', 'Box 5']
-const CAGED_SHAPES   = ['', 'A shape', 'G shape', 'E shape', 'D shape', 'C shape']
+const CAGED_SHAPES = ['', 'A shape', 'G shape', 'E shape', 'D shape', 'C shape']
 
 const BOX_STYLES: Record<number, { bg: string; text: string; ring: string }> = {
   1: { bg: 'bg-emerald-500', text: 'text-emerald-400', ring: 'ring-emerald-300' },
@@ -107,7 +106,7 @@ export function PentatonicMapView({ onBack }: Props) {
                     : 'bg-transparent text-gray-500 border-gray-700 hover:border-gray-500'
                 }`}
               >
-                {POSITION_NAMES[box]} · {CAGED_SHAPES[box]}
+                {CAGED_SHAPES[box]}
               </button>
             )
           })}
@@ -136,7 +135,7 @@ export function PentatonicMapView({ onBack }: Props) {
           <span key={box} className="flex items-center gap-1.5 text-sm">
             <span className={`w-3 h-3 rounded-full inline-block ${BOX_STYLES[box].bg}`} />
             <span className={BOX_STYLES[box].text}>
-              {POSITION_NAMES[box]} · {CAGED_SHAPES[box]}
+              {CAGED_SHAPES[box]}
             </span>
           </span>
         ))}

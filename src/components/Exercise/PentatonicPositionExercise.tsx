@@ -16,8 +16,7 @@ interface Props {
   exercise: ExerciseInstance
 }
 
-const POSITION_NAMES = ['', 'Box 1', 'Box 2', 'Box 3', 'Box 4', 'Box 5']
-const CAGED_SHAPES   = ['', 'A shape', 'G shape', 'E shape', 'D shape', 'C shape']
+const CAGED_SHAPES = ['', 'A shape', 'G shape', 'E shape', 'D shape', 'C shape']
 const ALL_KEYS = ['A', 'A#', 'B', 'C', 'C#', 'D', 'D#', 'E', 'F', 'F#', 'G', 'G#']
 
 function getModeInstructions(
@@ -144,7 +143,7 @@ export function PentatonicPositionExercise({ exercise }: Props) {
       <div className="text-center">
         <p className="text-gray-400 text-sm mb-1">Practice pentatonic scale</p>
         <p className="text-2xl font-bold text-emerald-400">
-          {NOTE_DISPLAY[localKey] ?? localKey} Minor Pentatonic — {POSITION_NAMES[localPosition]} · {CAGED_SHAPES[localPosition]}
+          {NOTE_DISPLAY[localKey] ?? localKey} Minor Pentatonic — {CAGED_SHAPES[localPosition]}
         </p>
         <p className="text-gray-500 text-sm mt-1">Target: {bpm} BPM</p>
       </div>
@@ -184,7 +183,7 @@ export function PentatonicPositionExercise({ exercise }: Props) {
 
       {/* Box picker */}
       <div className="flex flex-col gap-2">
-        <p className="text-center text-gray-500 text-xs uppercase tracking-wide">Box</p>
+        <p className="text-center text-gray-500 text-xs uppercase tracking-wide">Shape</p>
         <div className="flex flex-wrap gap-1.5 justify-center">
           {[1, 2, 3, 4, 5].map(pos => (
             <button
@@ -196,7 +195,7 @@ export function PentatonicPositionExercise({ exercise }: Props) {
                   : 'bg-gray-700 hover:bg-gray-600 text-white'
               }`}
             >
-              {POSITION_NAMES[pos]} · {CAGED_SHAPES[pos]}
+              {CAGED_SHAPES[pos]}
             </button>
           ))}
         </div>
