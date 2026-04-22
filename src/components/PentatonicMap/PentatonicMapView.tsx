@@ -4,6 +4,7 @@ import { getAllPentatonicPositions, getNoteAtFret, STANDARD_TUNING, NOTE_DISPLAY
 
 const ALL_KEYS = ALL_NOTES
 const CAGED_SHAPES = ['', 'E shape', 'G shape', 'D shape', 'A shape', 'C shape']
+const MAJOR_CAGED_SHAPES = ['', 'G shape', 'E shape', 'D shape', 'C shape', 'A shape']
 
 type ScaleType = 'minor' | 'major'
 
@@ -134,7 +135,7 @@ export function PentatonicMapView({ onBack }: Props) {
                     : 'bg-transparent text-gray-500 border-gray-700 hover:border-gray-500'
                 }`}
               >
-                {CAGED_SHAPES[box]}
+                {(scaleType === 'major' ? MAJOR_CAGED_SHAPES : CAGED_SHAPES)[box]}
               </button>
             )
           })}
@@ -163,7 +164,7 @@ export function PentatonicMapView({ onBack }: Props) {
           <span key={box} className="flex items-center gap-1.5 text-sm">
             <span className={`w-3 h-3 rounded-full inline-block ${BOX_STYLES[box].bg}`} />
             <span className={BOX_STYLES[box].text}>
-              {CAGED_SHAPES[box]}
+              {(scaleType === 'major' ? MAJOR_CAGED_SHAPES : CAGED_SHAPES)[box]}
             </span>
           </span>
         ))}
