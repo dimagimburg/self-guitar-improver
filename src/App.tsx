@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useAppStore } from './store/useAppStore'
 import { StartScreen } from './components/Session/StartScreen'
 import { ExerciseScreen } from './components/Session/ExerciseScreen'
@@ -13,10 +13,34 @@ type AppView = 'session' | 'pentatonic-map' | 'free-practice' | 'fretboard-build
 function App() {
   const { sessionPhase } = useAppStore()
   const [view, setView] = useState<AppView>('session')
+  const [elapsedSeconds, setElapsedSeconds] = useState(0)
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setElapsedSeconds(s => s + 1)
+    }, 1000)
+    return () => clearInterval(interval)
+  }, [])
+
+  const formatTime = (seconds: number) => {
+    const h = Math.floor(seconds / 3600)
+    const m = Math.floor((seconds % 3600) / 60)
+    const s = seconds % 60
+    return `${h}:${String(m).padStart(2, '0')}:${String(s).padStart(2, '0')}`
+  }
+
+  const TimerDisplay = () => (
+    <div className="fixed top-6 right-6 z-50">
+      <div className="text-white text-3xl font-bold font-mono bg-gray-800 px-6 py-3 rounded-lg border border-gray-700">
+        {formatTime(elapsedSeconds)}
+      </div>
+    </div>
+  )
 
   if (view === 'pentatonic-map') {
     return (
       <div className="min-h-screen bg-gray-900 text-white">
+        <TimerDisplay />
         <PentatonicMapView onBack={() => setView('session')} />
       </div>
     )
@@ -25,6 +49,7 @@ function App() {
   if (view === 'free-practice') {
     return (
       <div className="min-h-screen bg-gray-900 text-white">
+        <TimerDisplay />
         <FreePracticeView onBack={() => setView('session')} />
       </div>
     )
@@ -33,6 +58,7 @@ function App() {
   if (view === 'fretboard-builder') {
     return (
       <div className="min-h-screen bg-gray-900 text-white">
+        <TimerDisplay />
         <FretboardBuilderView onBack={() => setView('session')} />
       </div>
     )
@@ -40,6 +66,7 @@ function App() {
 
   return (
     <div className="min-h-screen bg-gray-900 text-white">
+      <TimerDisplay />
       {sessionPhase === 'start' && (
         <StartScreen
           onOpenMap={() => setView('pentatonic-map')}

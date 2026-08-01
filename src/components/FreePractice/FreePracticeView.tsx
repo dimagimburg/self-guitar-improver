@@ -2,9 +2,10 @@ import { useState } from 'react'
 import { PentatonicPositionExercise } from '../Exercise/PentatonicPositionExercise'
 import { PentatonicTransitionExercise } from '../Exercise/PentatonicTransitionExercise'
 import { FretboardNoteExercise } from '../Exercise/FretboardNoteExercise'
+import { FindNoteWarmupExercise } from '../Exercise/FindNoteWarmupExercise'
 import { ExerciseInstance } from '../../types'
 
-type FreeMode = 'pentatonic_position' | 'pentatonic_transition' | 'fretboard_quiz'
+type FreeMode = 'pentatonic_position' | 'pentatonic_transition' | 'fretboard_quiz' | 'find_note_warmup'
 
 // Minimal seed instances — the exercise components manage their own state internally
 const PENTA_POSITION_EXERCISE: ExerciseInstance = {
@@ -101,6 +102,20 @@ export function FreePracticeView({ onBack }: Props) {
     )
   }
 
+  if (mode === 'find_note_warmup') {
+    return (
+      <div className="min-h-screen bg-gray-900 text-white p-6">
+        <div className="flex items-center gap-4 mb-6 max-w-3xl mx-auto">
+          <button onClick={back} className="text-gray-400 hover:text-white transition-colors text-sm">
+            ← Back
+          </button>
+          <h2 className="text-white font-bold text-lg">Find the Note Warmup</h2>
+        </div>
+        <FindNoteWarmupExercise />
+      </div>
+    )
+  }
+
   return (
     <div className="flex flex-col min-h-screen bg-gray-900 text-white p-6 max-w-3xl mx-auto">
       <div className="flex items-center gap-4 mb-8">
@@ -131,6 +146,12 @@ export function FreePracticeView({ onBack }: Props) {
           description="12-question quiz — name the note at a given string and fret. Answer with keyboard or tap."
           accent="text-purple-400"
           onClick={() => setMode('fretboard_quiz')}
+        />
+        <Card
+          title="Find the Note Warmup"
+          description="Quick warmup — press space to get a random note and string, then find it on your guitar. Perfect for loosening up."
+          accent="text-orange-400"
+          onClick={() => setMode('find_note_warmup')}
         />
       </div>
     </div>
