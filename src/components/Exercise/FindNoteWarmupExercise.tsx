@@ -1,5 +1,5 @@
-import { useState, useEffect } from 'react'
-import { ALL_NOTES, NOTE_DISPLAY } from '../../data/notes'
+import { useState, useEffect, useRef } from 'react'
+import { ALL_NOTES, NOTE_DISPLAY, getNoteAtFret, STANDARD_TUNING } from '../../data/notes'
 
 const STRING_NAMES = ['e (1st string)', 'B (2nd string)', 'G (3rd string)', 'D (4th string)', 'A (5th string)', 'E (6th string)']
 
@@ -9,12 +9,44 @@ interface TimeRecord {
   string: number
 }
 
+function NotePopup({ note, stringIdx }: { note: string; stringIdx: number }) {
+  const positions: number[] = []
+
+  for (let fret = 0; fret <= 21; fret++) {
+    if (getNoteAtFret(STANDARD_TUNING[stringIdx], fret) === note) {
+      positions.push(fret)
+    }
+  }
+
+  return (
+    <div className="bg-gray-900 p-3 rounded border border-gray-700 whitespace-nowrap">
+      <div className="text-xs text-gray-400 mb-2">{STRING_NAMES[stringIdx].split(' ')[0]} string</div>
+      <div className="flex gap-1">
+        {Array.from({ length: 12 }).map((_, fret) => (
+          <div
+            key={fret}
+            className={`w-8 h-8 flex items-center justify-center text-xs rounded ${
+              positions.includes(fret)
+                ? 'bg-emerald-500 text-white font-bold'
+                : 'bg-gray-800 text-gray-600'
+            }`}
+          >
+            {fret}
+          </div>
+        ))}
+      </div>
+    </div>
+  )
+}
+
 export function FindNoteWarmupExercise() {
   const [currentNote, setCurrentNote] = useState<string>('')
   const [currentString, setCurrentString] = useState<number>(-1)
   const [timeStarted, setTimeStarted] = useState<number | null>(null)
   const [times, setTimes] = useState<TimeRecord[]>([])
   const [isActive, setIsActive] = useState(false)
+  const [hoveredIndex, setHoveredIndex] = useState<number | null>(null)
+  const hoverRef = useRef<HTMLDivElement>(null)
 
   const generateNewNote = () => {
     const randomNote = ALL_NOTES[Math.floor(Math.random() * ALL_NOTES.length)]
@@ -96,9 +128,21 @@ export function FindNoteWarmupExercise() {
           <div className="max-h-60 overflow-y-auto">
             <div className="space-y-2">
               {times.map((record, idx) => (
-                <div key={idx} className="flex justify-between text-sm text-gray-300 bg-gray-900 p-2 rounded">
+                <div
+                  key={idx}
+                  className="relative flex justify-between text-sm text-gray-300 bg-gray-900 p-2 rounded hover:bg-gray-800 cursor-pointer transition-colors"
+                  onMouseEnter={() => setHoveredIndex(idx)}
+                  onMouseLeave={() => setHoveredIndex(null)}
+                  ref={hoveredIndex === idx ? hoverRef : null}
+                >
                   <span>{NOTE_DISPLAY[record.note] || record.note} on {STRING_NAMES[record.string]}</span>
                   <span className="font-mono text-emerald-400">{record.time.toFixed(2)}s</span>
+
+                  {hoveredIndex === idx && (
+                    <div className="absolute left-0 bottom-full mb-2 z-10">
+                      <NotePopup note={record.note} stringIdx={record.string} />
+                    </div>
+                  )}
                 </div>
               ))}
             </div>
