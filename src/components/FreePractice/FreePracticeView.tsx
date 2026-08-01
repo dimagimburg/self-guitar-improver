@@ -1,33 +1,4 @@
-import { useState } from 'react'
-import { PentatonicPositionExercise } from '../Exercise/PentatonicPositionExercise'
-import { PentatonicTransitionExercise } from '../Exercise/PentatonicTransitionExercise'
-import { FretboardNoteExercise } from '../Exercise/FretboardNoteExercise'
-import { FindNoteWarmupExercise } from '../Exercise/FindNoteWarmupExercise'
-import { ExerciseInstance } from '../../types'
-
-type FreeMode = 'pentatonic_position' | 'pentatonic_transition' | 'fretboard_quiz' | 'find_note_warmup'
-
-// Minimal seed instances — the exercise components manage their own state internally
-const PENTA_POSITION_EXERCISE: ExerciseInstance = {
-  id: 'free-penta-pos',
-  type: 'pentatonic_position',
-  duration: 0,
-  params: { key: 'A', position: 1, bpm: 80, mode: 'ascending' },
-}
-
-const PENTA_TRANSITION_EXERCISE: ExerciseInstance = {
-  id: 'free-penta-trans',
-  type: 'pentatonic_transition',
-  duration: 0,
-  params: { key: 'A', fromPosition: 1, toPosition: 2, bpm: 80 },
-}
-
-const FRETBOARD_EXERCISE: ExerciseInstance = {
-  id: 'free-fretboard',
-  type: 'fretboard_note',
-  duration: 0,
-  params: { mode: 'identify', scope: 'full' },
-}
+import { useNavigate } from 'react-router-dom'
 
 interface CardProps {
   title: string
@@ -56,65 +27,7 @@ interface Props {
 }
 
 export function FreePracticeView({ onBack }: Props) {
-  const [mode, setMode] = useState<FreeMode | null>(null)
-
-  const back = () => setMode(null)
-
-  if (mode === 'pentatonic_position') {
-    return (
-      <div className="flex flex-col min-h-screen bg-gray-900 text-white p-6 max-w-3xl mx-auto">
-        <div className="flex items-center gap-4 mb-6">
-          <button onClick={back} className="text-gray-400 hover:text-white transition-colors text-sm">
-            ← Back
-          </button>
-          <h2 className="text-white font-bold text-lg">Pentatonic Position</h2>
-        </div>
-        <PentatonicPositionExercise exercise={PENTA_POSITION_EXERCISE} />
-      </div>
-    )
-  }
-
-  if (mode === 'pentatonic_transition') {
-    return (
-      <div className="flex flex-col min-h-screen bg-gray-900 text-white p-6 max-w-3xl mx-auto">
-        <div className="flex items-center gap-4 mb-6">
-          <button onClick={back} className="text-gray-400 hover:text-white transition-colors text-sm">
-            ← Back
-          </button>
-          <h2 className="text-white font-bold text-lg">Pentatonic Transition</h2>
-        </div>
-        <PentatonicTransitionExercise exercise={PENTA_TRANSITION_EXERCISE} />
-      </div>
-    )
-  }
-
-  if (mode === 'fretboard_quiz') {
-    return (
-      <div className="flex flex-col min-h-screen bg-gray-900 text-white p-6 max-w-3xl mx-auto">
-        <div className="flex items-center gap-4 mb-6">
-          <button onClick={back} className="text-gray-400 hover:text-white transition-colors text-sm">
-            ← Back
-          </button>
-          <h2 className="text-white font-bold text-lg">Fretboard Q&A</h2>
-        </div>
-        <FretboardNoteExercise exercise={FRETBOARD_EXERCISE} />
-      </div>
-    )
-  }
-
-  if (mode === 'find_note_warmup') {
-    return (
-      <div className="min-h-screen bg-gray-900 text-white p-6">
-        <div className="flex items-center gap-4 mb-6 max-w-3xl mx-auto">
-          <button onClick={back} className="text-gray-400 hover:text-white transition-colors text-sm">
-            ← Back
-          </button>
-          <h2 className="text-white font-bold text-lg">Find the Note Warmup</h2>
-        </div>
-        <FindNoteWarmupExercise />
-      </div>
-    )
-  }
+  const navigate = useNavigate()
 
   return (
     <div className="flex flex-col min-h-screen bg-gray-900 text-white p-6 max-w-3xl mx-auto">
@@ -133,25 +46,25 @@ export function FreePracticeView({ onBack }: Props) {
           title="Pentatonic Position"
           description="Pick any key and CAGED shape to drill ascending, descending, or alternating runs."
           accent="text-emerald-400"
-          onClick={() => setMode('pentatonic_position')}
+          onClick={() => navigate('/free-practice/pentatonic-position')}
         />
         <Card
           title="Pentatonic Transition"
           description="Choose a key and two CAGED shapes to practice moving between them up the neck."
           accent="text-blue-400"
-          onClick={() => setMode('pentatonic_transition')}
+          onClick={() => navigate('/free-practice/pentatonic-transition')}
         />
         <Card
           title="Fretboard Q&A"
           description="12-question quiz — name the note at a given string and fret. Answer with keyboard or tap."
           accent="text-purple-400"
-          onClick={() => setMode('fretboard_quiz')}
+          onClick={() => navigate('/free-practice/fretboard-quiz')}
         />
         <Card
           title="Find the Note Warmup"
           description="Quick warmup — press space to get a random note and string, then find it on your guitar. Perfect for loosening up."
           accent="text-orange-400"
-          onClick={() => setMode('find_note_warmup')}
+          onClick={() => navigate('/free-practice/find-the-note-warmup')}
         />
       </div>
     </div>

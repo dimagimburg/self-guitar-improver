@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react'
+import { BrowserRouter, Routes, Route, useNavigate, useLocation } from 'react-router-dom'
 import { useAppStore } from './store/useAppStore'
 import { StartScreen } from './components/Session/StartScreen'
 import { ExerciseScreen } from './components/Session/ExerciseScreen'
@@ -7,34 +8,40 @@ import { CompleteScreen } from './components/Session/CompleteScreen'
 import { PentatonicMapView } from './components/PentatonicMap/PentatonicMapView'
 import { FreePracticeView } from './components/FreePractice/FreePracticeView'
 import { FretboardBuilderView } from './components/FretboardBuilder/FretboardBuilderView'
+import { PentatonicPositionExercise } from './components/Exercise/PentatonicPositionExercise'
+import { PentatonicTransitionExercise } from './components/Exercise/PentatonicTransitionExercise'
+import { FretboardNoteExercise } from './components/Exercise/FretboardNoteExercise'
+import { FindNoteWarmupExercise } from './components/Exercise/FindNoteWarmupExercise'
+import { ExerciseInstance } from './types'
 
-type AppView = 'session' | 'pentatonic-map' | 'free-practice' | 'fretboard-builder'
+const PENTA_POSITION_EXERCISE: ExerciseInstance = {
+  id: 'free-penta-pos',
+  type: 'pentatonic_position',
+  duration: 0,
+  params: { key: 'A', position: 1, bpm: 80, mode: 'ascending' },
+}
 
-function App() {
-  const { sessionPhase } = useAppStore()
-  const [view, setViewState] = useState<AppView>(() => {
-    const params = new URLSearchParams(window.location.search)
-    return (params.get('view') as AppView) || 'session'
-  })
+const PENTA_TRANSITION_EXERCISE: ExerciseInstance = {
+  id: 'free-penta-trans',
+  type: 'pentatonic_transition',
+  duration: 0,
+  params: { key: 'A', fromPosition: 1, toPosition: 2, bpm: 80 },
+}
+
+const FRETBOARD_EXERCISE: ExerciseInstance = {
+  id: 'free-fretboard',
+  type: 'fretboard_note',
+  duration: 0,
+  params: { mode: 'identify', scope: 'full' },
+}
+
+function TimerDisplay() {
   const [elapsedSeconds, setElapsedSeconds] = useState(0)
-
-  const setView = (newView: AppView) => {
-    setViewState(newView)
-    window.history.pushState(null, '', `?view=${newView}`)
-    setElapsedSeconds(0)
-  }
+  const location = useLocation()
 
   useEffect(() => {
-    const handlePopState = () => {
-      const params = new URLSearchParams(window.location.search)
-      const newView = (params.get('view') as AppView) || 'session'
-      setViewState(newView)
-      setElapsedSeconds(0)
-    }
-
-    window.addEventListener('popstate', handlePopState)
-    return () => window.removeEventListener('popstate', handlePopState)
-  }, [])
+    setElapsedSeconds(0)
+  }, [location])
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -50,55 +57,150 @@ function App() {
     return `${h}:${String(m).padStart(2, '0')}:${String(s).padStart(2, '0')}`
   }
 
-  const TimerDisplay = () => (
+  return (
     <div className="fixed top-6 right-6 z-50">
       <div className="text-white text-3xl font-bold font-mono bg-gray-800 px-6 py-3 rounded-lg border border-gray-700">
         {formatTime(elapsedSeconds)}
       </div>
     </div>
   )
+}
 
-  if (view === 'pentatonic-map') {
-    return (
-      <div className="min-h-screen bg-gray-900 text-white">
-        <TimerDisplay />
-        <PentatonicMapView onBack={() => setView('session')} />
-      </div>
-    )
-  }
-
-  if (view === 'free-practice') {
-    return (
-      <div className="min-h-screen bg-gray-900 text-white">
-        <TimerDisplay />
-        <FreePracticeView onBack={() => setView('session')} />
-      </div>
-    )
-  }
-
-  if (view === 'fretboard-builder') {
-    return (
-      <div className="min-h-screen bg-gray-900 text-white">
-        <TimerDisplay />
-        <FretboardBuilderView onBack={() => setView('session')} />
-      </div>
-    )
-  }
+function SessionPage() {
+  const { sessionPhase } = useAppStore()
+  const navigate = useNavigate()
 
   return (
     <div className="min-h-screen bg-gray-900 text-white">
       <TimerDisplay />
       {sessionPhase === 'start' && (
         <StartScreen
-          onOpenMap={() => setView('pentatonic-map')}
-          onOpenFreePractice={() => setView('free-practice')}
-          onOpenBuilder={() => setView('fretboard-builder')}
+          onOpenMap={() => navigate('/pentatonic-map')}
+          onOpenFreePractice={() => navigate('/free-practice')}
+          onOpenBuilder={() => navigate('/fretboard-builder')}
         />
       )}
       {sessionPhase === 'exercise' && <ExerciseScreen />}
       {sessionPhase === 'feedback' && <FeedbackScreen />}
       {sessionPhase === 'complete' && <CompleteScreen />}
     </div>
+  )
+}
+
+function PentatonicMapPage() {
+  const navigate = useNavigate()
+  return (
+    <div className="min-h-screen bg-gray-900 text-white">
+      <TimerDisplay />
+      <PentatonicMapView onBack={() => navigate('/')} />
+    </div>
+  )
+}
+
+function FreePracticeIndexPage() {
+  const navigate = useNavigate()
+  return (
+    <div className="min-h-screen bg-gray-900 text-white">
+      <TimerDisplay />
+      <FreePracticeView onBack={() => navigate('/')} />
+    </div>
+  )
+}
+
+function PentatonicPositionPage() {
+  const navigate = useNavigate()
+  return (
+    <div className="flex flex-col min-h-screen bg-gray-900 text-white p-6 max-w-3xl mx-auto">
+      <TimerDisplay />
+      <div className="flex items-center gap-4 mb-6">
+        <button onClick={() => navigate('/free-practice')} className="text-gray-400 hover:text-white transition-colors text-sm">
+          ← Back
+        </button>
+        <h2 className="text-white font-bold text-lg">Pentatonic Position</h2>
+      </div>
+      <PentatonicPositionExercise exercise={PENTA_POSITION_EXERCISE} />
+    </div>
+  )
+}
+
+function PentatonicTransitionPage() {
+  const navigate = useNavigate()
+  return (
+    <div className="flex flex-col min-h-screen bg-gray-900 text-white p-6 max-w-3xl mx-auto">
+      <TimerDisplay />
+      <div className="flex items-center gap-4 mb-6">
+        <button onClick={() => navigate('/free-practice')} className="text-gray-400 hover:text-white transition-colors text-sm">
+          ← Back
+        </button>
+        <h2 className="text-white font-bold text-lg">Pentatonic Transition</h2>
+      </div>
+      <PentatonicTransitionExercise exercise={PENTA_TRANSITION_EXERCISE} />
+    </div>
+  )
+}
+
+function FretboardQuizPage() {
+  const navigate = useNavigate()
+  return (
+    <div className="flex flex-col min-h-screen bg-gray-900 text-white p-6 max-w-3xl mx-auto">
+      <TimerDisplay />
+      <div className="flex items-center gap-4 mb-6">
+        <button onClick={() => navigate('/free-practice')} className="text-gray-400 hover:text-white transition-colors text-sm">
+          ← Back
+        </button>
+        <h2 className="text-white font-bold text-lg">Fretboard Q&A</h2>
+      </div>
+      <FretboardNoteExercise exercise={FRETBOARD_EXERCISE} />
+    </div>
+  )
+}
+
+function FindNoteWarmupPage() {
+  const navigate = useNavigate()
+  return (
+    <div className="min-h-screen bg-gray-900 text-white p-6">
+      <TimerDisplay />
+      <div className="flex items-center gap-4 mb-6 max-w-3xl mx-auto">
+        <button onClick={() => navigate('/free-practice')} className="text-gray-400 hover:text-white transition-colors text-sm">
+          ← Back
+        </button>
+        <h2 className="text-white font-bold text-lg">Find the Note Warmup</h2>
+      </div>
+      <FindNoteWarmupExercise />
+    </div>
+  )
+}
+
+function FretboardBuilderPage() {
+  const navigate = useNavigate()
+  return (
+    <div className="min-h-screen bg-gray-900 text-white">
+      <TimerDisplay />
+      <FretboardBuilderView onBack={() => navigate('/')} />
+    </div>
+  )
+}
+
+function AppRoutes() {
+  return (
+    <Routes>
+      <Route path="/" element={<SessionPage />} />
+      <Route path="/pentatonic-map" element={<PentatonicMapPage />} />
+      <Route path="/free-practice" element={<FreePracticeIndexPage />} />
+      <Route path="/free-practice/pentatonic-position" element={<PentatonicPositionPage />} />
+      <Route path="/free-practice/pentatonic-transition" element={<PentatonicTransitionPage />} />
+      <Route path="/free-practice/fretboard-quiz" element={<FretboardQuizPage />} />
+      <Route path="/free-practice/find-the-note-warmup" element={<FindNoteWarmupPage />} />
+      <Route path="/fretboard-builder" element={<FretboardBuilderPage />} />
+    </Routes>
+  )
+}
+
+function App() {
+  return (
+    <BrowserRouter>
+      <AppRoutes />
+    </BrowserRouter>
   )
 }
 
