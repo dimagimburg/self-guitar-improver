@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react'
-import { BrowserRouter, Routes, Route, useNavigate, useLocation } from 'react-router-dom'
+import { HashRouter, Routes, Route, useNavigate, useLocation } from 'react-router-dom'
 import { useAppStore } from './store/useAppStore'
 import { StartScreen } from './components/Session/StartScreen'
 import { ExerciseScreen } from './components/Session/ExerciseScreen'
@@ -197,12 +197,10 @@ function AppRoutes() {
 }
 
 function App() {
-  const basename = import.meta.env.MODE === 'production' ? '/self-guitar-improver/' : '/'
-
   return (
-    <BrowserRouter basename={basename}>
+    <HashRouter>
       <AppRoutes />
-    </BrowserRouter>
+    </HashRouter>
   )
 }
 
