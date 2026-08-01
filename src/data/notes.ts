@@ -108,7 +108,7 @@ export function getPentatonicPositionFrets(
   )
 }
 
-// All occurrences of a pentatonic box across the full neck (covers both octave positions)
+// All occurrences of a pentatonic shape across the full neck (covers both octave positions)
 export function getAllPentatonicPositions(
   rootNote: string,
   position: number,
@@ -139,8 +139,8 @@ export function getAllPentatonicPositions(
   return result
 }
 
-// Returns true only if every note in the box fits within the fretboard
-export function isPentatonicBoxValid(
+// Returns true only if every note in the shape fits within the fretboard
+export function isPentatonicShapeValid(
   rootNote: string,
   position: number,
   maxFret = 21
@@ -150,3 +150,6 @@ export function isPentatonicBoxValid(
   const expected = pattern.reduce((sum, { frets }) => sum + frets.length, 0)
   return getPentatonicPositionFrets(rootNote, position, STANDARD_TUNING, maxFret).length === expected
 }
+
+// Backwards compatibility
+export const isPentatonicBoxValid = isPentatonicShapeValid

@@ -12,8 +12,29 @@ type AppView = 'session' | 'pentatonic-map' | 'free-practice' | 'fretboard-build
 
 function App() {
   const { sessionPhase } = useAppStore()
-  const [view, setView] = useState<AppView>('session')
+  const [view, setViewState] = useState<AppView>(() => {
+    const params = new URLSearchParams(window.location.search)
+    return (params.get('view') as AppView) || 'session'
+  })
   const [elapsedSeconds, setElapsedSeconds] = useState(0)
+
+  const setView = (newView: AppView) => {
+    setViewState(newView)
+    window.history.pushState(null, '', `?view=${newView}`)
+    setElapsedSeconds(0)
+  }
+
+  useEffect(() => {
+    const handlePopState = () => {
+      const params = new URLSearchParams(window.location.search)
+      const newView = (params.get('view') as AppView) || 'session'
+      setViewState(newView)
+      setElapsedSeconds(0)
+    }
+
+    window.addEventListener('popstate', handlePopState)
+    return () => window.removeEventListener('popstate', handlePopState)
+  }, [])
 
   useEffect(() => {
     const interval = setInterval(() => {

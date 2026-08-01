@@ -1,6 +1,6 @@
 import { v4 as uuidv4 } from 'uuid'
 import { ExerciseInstance, ExerciseResult, FretboardMode, PentatonicMode, Session, SkillState } from '../../types'
-import { ALL_NOTES, getNoteAtFret, getPentatonicPositionFrets, isPentatonicBoxValid, STANDARD_TUNING } from '../../data/notes'
+import { ALL_NOTES, getNoteAtFret, getPentatonicPositionFrets, isPentatonicShapeValid, STANDARD_TUNING } from '../../data/notes'
 
 // --- Weighted random selection ---
 
@@ -145,7 +145,7 @@ function makePentatonicExercise(
   position: number
 ): ExerciseInstance {
   const KEYS = ['C', 'C#', 'D', 'D#', 'E', 'F', 'F#', 'G', 'G#', 'A', 'A#', 'B'] as const
-  const validKeys = KEYS.filter(k => isPentatonicBoxValid(k, position))
+  const validKeys = KEYS.filter(k => isPentatonicShapeValid(k, position))
   const key = weightedRandomFrom(validKeys.length > 0 ? validKeys : [...KEYS], history, r => r.key)
   const mode = pickPentatonicMode(skill)
   const bpm = getBaseBpm(skill)
@@ -177,7 +177,7 @@ function makeTransitionExercise(
   const KEYS = ['C', 'C#', 'D', 'D#', 'E', 'F', 'F#', 'G', 'G#', 'A', 'A#', 'B'] as const
   const trans = CAGED_TRANSITIONS[Math.floor(Math.random() * CAGED_TRANSITIONS.length)]
   const validKeys = KEYS.filter(k =>
-    isPentatonicBoxValid(k, trans.from) && isPentatonicBoxValid(k, trans.to)
+    isPentatonicShapeValid(k, trans.from) && isPentatonicShapeValid(k, trans.to)
   )
   const key = weightedRandomFrom(validKeys.length > 0 ? validKeys : [...KEYS], history, r => r.key)
 

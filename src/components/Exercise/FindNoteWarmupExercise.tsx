@@ -12,7 +12,6 @@ interface TimeRecord {
 export function FindNoteWarmupExercise() {
   const [currentNote, setCurrentNote] = useState<string>('')
   const [currentString, setCurrentString] = useState<number>(-1)
-  const [showAnswer, setShowAnswer] = useState(false)
   const [timeStarted, setTimeStarted] = useState<number | null>(null)
   const [times, setTimes] = useState<TimeRecord[]>([])
   const [isActive, setIsActive] = useState(false)
@@ -22,7 +21,6 @@ export function FindNoteWarmupExercise() {
     const randomString = Math.floor(Math.random() * 6)
     setCurrentNote(randomNote)
     setCurrentString(randomString)
-    setShowAnswer(false)
     setTimeStarted(Date.now())
     setIsActive(true)
   }
@@ -36,11 +34,9 @@ export function FindNoteWarmupExercise() {
       return
     }
 
-    if (!showAnswer && timeStarted !== null) {
+    if (timeStarted !== null) {
       const elapsed = (Date.now() - timeStarted) / 1000
-      setTimes([...times, { time: elapsed, note: currentNote, string: currentString }])
-      setShowAnswer(true)
-    } else {
+      setTimes(prev => [{ time: elapsed, note: currentNote, string: currentString }, ...prev])
       generateNewNote()
     }
   }
@@ -48,7 +44,7 @@ export function FindNoteWarmupExercise() {
   useEffect(() => {
     window.addEventListener('keydown', handleSpace)
     return () => window.removeEventListener('keydown', handleSpace)
-  }, [isActive, showAnswer, timeStarted, currentNote, currentString, times])
+  }, [isActive, timeStarted, currentNote, currentString, times])
 
   const averageTime = times.length > 0 ? (times.reduce((sum, r) => sum + r.time, 0) / times.length).toFixed(2) : '0'
 
@@ -56,7 +52,7 @@ export function FindNoteWarmupExercise() {
     <div className="flex flex-col items-center justify-center min-h-screen gap-8 p-6">
       <div>
         <h1 className="text-4xl font-bold text-white mb-4 text-center">Find the Note Warmup</h1>
-        <p className="text-gray-400 text-center">Press SPACE to start, then press SPACE again when you find the note on your guitar</p>
+        <p className="text-gray-400 text-center">Press SPACE to start, press SPACE each time you find the note on your guitar</p>
       </div>
 
       <div className="flex flex-col items-center gap-8">
@@ -68,33 +64,12 @@ export function FindNoteWarmupExercise() {
             Start (or press Space)
           </button>
         ) : (
-          <>
-            <div className="text-center">
-              <div className="text-6xl font-bold text-emerald-400 mb-2">
-                {NOTE_DISPLAY[currentNote] || currentNote}
-              </div>
-              <div className="text-4xl font-bold text-blue-400">
-                {STRING_NAMES[currentString]}
-              </div>
+          <div className="text-center">
+            <div className="text-8xl font-bold text-emerald-400">
+              {NOTE_DISPLAY[currentNote] || currentNote} on {STRING_NAMES[currentString]}
             </div>
-
-            {showAnswer && timeStarted !== null && (
-              <div className="text-center bg-gray-800 p-6 rounded-lg border border-gray-700">
-                <div className="text-gray-400 text-sm mb-2">Time taken:</div>
-                <div className="text-5xl font-bold text-white">
-                  {((Date.now() - timeStarted) / 1000).toFixed(2)}s
-                </div>
-                <div className="text-gray-400 text-sm mt-2">Press SPACE for next note</div>
-              </div>
-            )}
-
-            {!showAnswer && (
-              <div className="text-gray-400 text-center">
-                <div className="text-lg">Find this note on your guitar...</div>
-                <div className="text-sm mt-2">Press SPACE when ready</div>
-              </div>
-            )}
-          </>
+            <div className="text-gray-400 text-lg mt-4">Press SPACE when found</div>
+          </div>
         )}
       </div>
 
@@ -122,7 +97,7 @@ export function FindNoteWarmupExercise() {
             <div className="space-y-2">
               {times.map((record, idx) => (
                 <div key={idx} className="flex justify-between text-sm text-gray-300 bg-gray-900 p-2 rounded">
-                  <span>#{idx + 1}: {NOTE_DISPLAY[record.note] || record.note} on {STRING_NAMES[record.string]}</span>
+                  <span>{NOTE_DISPLAY[record.note] || record.note} on {STRING_NAMES[record.string]}</span>
                   <span className="font-mono text-emerald-400">{record.time.toFixed(2)}s</span>
                 </div>
               ))}

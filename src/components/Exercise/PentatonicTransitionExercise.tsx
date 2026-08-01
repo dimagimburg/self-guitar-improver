@@ -3,7 +3,7 @@ import { ExerciseInstance } from '../../types'
 import { Fretboard } from '../Fretboard/Fretboard'
 import {
   getPentatonicPositionFrets,
-  isPentatonicBoxValid,
+  isPentatonicShapeValid,
   NOTE_DISPLAY,
   ALL_NOTES,
 } from '../../data/notes'
@@ -46,7 +46,7 @@ function findTransitionIndex(fromPos: number, toPos: number): number {
 
 function isKeyValidForTransition(key: string, transIdx: number): boolean {
   const { from, to } = CAGED_TRANSITIONS[transIdx]
-  return isPentatonicBoxValid(key, from) && isPentatonicBoxValid(key, to)
+  return isPentatonicShapeValid(key, from) && isPentatonicShapeValid(key, to)
 }
 
 function pickValidKeyForTransition(transIdx: number, exclude?: string): string {

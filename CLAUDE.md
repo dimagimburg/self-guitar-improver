@@ -26,6 +26,7 @@ React 18 + TypeScript + Vite, Tailwind CSS, Zustand (with localStorage persisten
 ### State — `src/store/useAppStore.ts`
 
 Single Zustand store, persisted to localStorage. Holds:
+
 - `currentSession` / `currentExerciseIndex` / `sessionPhase`
 - `history: ExerciseResult[]` — every rated exercise ever
 - `skills: { fretboard: number, pentatonic: number }` — 1–10 each
@@ -35,6 +36,7 @@ Single Zustand store, persisted to localStorage. Holds:
 ### Session generation — `src/features/session/sessionGenerator.ts`
 
 `generateDailySession(skills)` builds 4–6 `ExerciseInstance` objects targeting ~1800 s total. Exercise type and params are skill-gated:
+
 - Skill 1–3 → limited scope / ascending only
 - Skill 4–6 → medium scope / more modes
 - Skill 7–10 → full neck / all modes including `target_note` and `alternating`
@@ -48,6 +50,7 @@ Recent "hard" ratings increase re-selection probability via weighted random sele
 ### Exercise components — `src/components/Exercise/`
 
 Three components, each accepts `ExerciseInstance`:
+
 - `FretboardNoteExercise` — find/string_focus modes use the sequencer; `identify` mode is a self-contained `IdentifyQA` sub-component (12 Q&A, keyboard input, auto-advance)
 - `PentatonicPositionExercise` — local key/position state with pickers; builds `seqPositions` from scale pattern then hands off to `useSequencer`
 - `PentatonicTransitionExercise` — two independent position states; sequences through both shapes with a shared-notes display
@@ -55,6 +58,7 @@ Three components, each accepts `ExerciseInstance`:
 ### Pentatonic data — `src/data/notes.ts`
 
 All pentatonic logic lives here. Key facts:
+
 - String indices: 0 = high e, 5 = low E
 - `PENTATONIC_POSITIONS` stores fret *offsets* from the root position on the low E string. Box 2 and Box 3 G-string notes are shifted −1 fret to account for the G–B tuning break (major 3rd, not perfect 4th).
 - `getPentatonicPositionFrets(root, position)` — single octave, filtered to 0–21
@@ -70,10 +74,11 @@ Note display: internal storage uses sharps only (`ALL_NOTES`). `NOTE_DISPLAY` ma
 ### Fretboard component — `src/components/Fretboard/Fretboard.tsx`
 
 22 frets (0–21), 6 strings. Renders full-viewport-width via `w-screen left-1/2 -translate-x-1/2` breakout, capped at `max-w-[1300px]`. Mid-neck position dots are absolutely positioned at the bottom edge of the G-string row (zero height impact). Accepts:
+
 - `highlightedPositions` / `highlightedPositions2` — emerald / blue dots
 - `coloredPositions: ColoredPosition[]` — takes priority, arbitrary Tailwind bg class per dot
 - `onFretClick` — makes cells clickable with hover indicator; used by FretboardBuilder
 
 ### CAGED shape names
 
-Box 1 = E shape, Box 2 = G shape, Box 3 = D shape, Box 4 = A shape, Box 5 = C shape.
+Box 1 = A shape, Box 2 = G shape, Box 3 = E shape, Box 4 = D shape, Box 5 = C shape.

@@ -4,7 +4,7 @@ import { Fretboard } from '../Fretboard/Fretboard'
 import {
   getFretboardPositions,
   getPentatonicPositionFrets,
-  isPentatonicBoxValid,
+  isPentatonicShapeValid,
   getNoteAtFret,
   STANDARD_TUNING,
   NOTE_DISPLAY,
@@ -54,7 +54,7 @@ function sortAscending(positions: Array<{ string: number; fret: number }>) {
 }
 
 function pickRandomValidKey(position: number, exclude?: string): string {
-  const valid = ALL_KEYS.filter(k => isPentatonicBoxValid(k, position) && k !== exclude)
+  const valid = ALL_KEYS.filter(k => isPentatonicShapeValid(k, position) && k !== exclude)
   const pool = valid.length > 0 ? valid : ALL_KEYS.filter(k => k !== exclude)
   return pool[Math.floor(Math.random() * pool.length)]
 }
@@ -108,7 +108,7 @@ export function PentatonicPositionExercise({ exercise }: Props) {
   }, [seq])
 
   const handleKeySelect = useCallback((k: string) => {
-    if (!isPentatonicBoxValid(k, localPosition)) return
+    if (!isPentatonicShapeValid(k, localPosition)) return
     stopIfPlaying()
     setLocalKey(k)
     if (pentatonicMode === 'target_note') setLocalTargetNote(pickTargetNote(k, localPosition))
@@ -116,7 +116,7 @@ export function PentatonicPositionExercise({ exercise }: Props) {
 
   const handlePositionSelect = useCallback((pos: number) => {
     stopIfPlaying()
-    const newKey = isPentatonicBoxValid(localKey, pos) ? localKey : pickRandomValidKey(pos)
+    const newKey = isPentatonicShapeValid(localKey, pos) ? localKey : pickRandomValidKey(pos)
     setLocalPosition(pos)
     setLocalKey(newKey)
     if (pentatonicMode === 'target_note') setLocalTargetNote(pickTargetNote(newKey, pos))
@@ -153,7 +153,7 @@ export function PentatonicPositionExercise({ exercise }: Props) {
         <p className="text-center text-gray-500 text-xs uppercase tracking-wide">Key</p>
         <div className="flex flex-wrap gap-1.5 justify-center">
           {ALL_KEYS.map(k => {
-            const valid = isPentatonicBoxValid(k, localPosition)
+            const valid = isPentatonicShapeValid(k, localPosition)
             return (
               <button
                 key={k}
@@ -173,7 +173,7 @@ export function PentatonicPositionExercise({ exercise }: Props) {
           })}
           <button
             onClick={handleShuffle}
-            title="Random key & box"
+            title="Random key & shape"
             className="px-2.5 py-1 rounded-md text-sm text-gray-400 hover:text-white bg-gray-700 hover:bg-gray-600 transition-colors"
           >
             ⟳
@@ -181,7 +181,7 @@ export function PentatonicPositionExercise({ exercise }: Props) {
         </div>
       </div>
 
-      {/* Box picker */}
+      {/* Shape picker */}
       <div className="flex flex-col gap-2">
         <p className="text-center text-gray-500 text-xs uppercase tracking-wide">Shape</p>
         <div className="flex flex-wrap gap-1.5 justify-center">

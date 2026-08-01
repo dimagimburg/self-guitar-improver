@@ -5,6 +5,8 @@ export interface ColoredPosition {
   fret: number
   color: string   // tailwind bg class, e.g. 'bg-emerald-500'
   isRoot?: boolean
+  rootType?: 'minor' | 'major'  // distinguishes minor root from major root
+  isMainRoot?: boolean  // true if this is the main root (matches current scale type)
   label?: string
 }
 
@@ -102,7 +104,7 @@ export function Fretboard({
                   {colored ? (
                     <div
                       className={`relative z-10 w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold ${colored.color} text-white ${
-                        colored.isRoot ? 'ring-2 ring-white ring-offset-1 ring-offset-gray-900' : ''
+                        colored.isRoot && colored.isMainRoot ? 'ring-4 ring-white ring-offset-2 ring-offset-gray-900' : ''
                       }`}
                     >
                       {colored.label ?? (showLabels ? note : '')}
