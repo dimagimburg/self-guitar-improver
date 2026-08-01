@@ -19,9 +19,12 @@ interface FretboardProps {
   tuning?: string[]
   coloredPositions?: ColoredPosition[]
   onFretClick?: (string: number, fret: number) => void
+  maxFrets?: number
+  compact?: boolean
+  showStringLabels?: boolean
 }
 
-const FRET_COUNT = 22 // 0-21
+const DEFAULT_FRET_COUNT = 22 // 0-21
 const STRING_NAMES = ['e', 'B', 'G', 'D', 'A', 'E']
 const SINGLE_DOT_FRETS = [3, 5, 7, 9, 15, 17, 19, 21]
 const DOUBLE_DOT_FRET = 12
@@ -35,7 +38,15 @@ export function Fretboard({
   tuning = STANDARD_TUNING,
   coloredPositions,
   onFretClick,
+  maxFrets = DEFAULT_FRET_COUNT,
+  compact = false,
+  showStringLabels = true,
 }: FretboardProps) {
+  const FRET_COUNT = maxFrets
+  const fretHeight = compact ? 'h-6' : 'h-11'
+  const dotSize = compact ? 'w-4 h-4' : 'w-8 h-8'
+  const containerClass = compact ? '' : 'w-screen max-w-[1300px] relative left-1/2 -translate-x-1/2 px-6'
+
   const isHighlighted = (s: number, f: number) =>
     highlightedPositions.some(p => p.string === s && p.fret === f)
   const isHighlighted2 = (s: number, f: number) =>
@@ -46,11 +57,11 @@ export function Fretboard({
     coloredPositions?.find(p => p.string === s && p.fret === f)
 
   return (
-    <div className="w-screen max-w-[1300px] relative left-1/2 -translate-x-1/2 px-6">
+    <div className={containerClass}>
       <div className="w-full">
         {/* Fret numbers */}
-        <div className="flex mb-1">
-          <div className="w-8 shrink-0" />
+        <div className={`flex ${compact ? 'mb-0.5' : 'mb-1'}`}>
+          {showStringLabels && <div className={`${compact ? 'w-4' : 'w-8'} shrink-0`} />}
           {Array.from({ length: FRET_COUNT }).map((_, fret) => (
             <div key={fret} className="flex-1 text-center text-xs text-gray-500">
               {fret === 0 ? 'O' : fret}
@@ -60,10 +71,12 @@ export function Fretboard({
 
         {/* Strings */}
         {tuning.map((openNote, stringIdx) => (
-          <div key={stringIdx} className="flex items-center mb-1.5">
-            <div className="w-8 shrink-0 text-center text-sm text-gray-400 font-mono">
-              {STRING_NAMES[stringIdx]}
-            </div>
+          <div key={stringIdx} className={`flex items-center ${compact ? 'mb-0.5' : 'mb-1.5'}`}>
+            {showStringLabels && (
+              <div className={`${compact ? 'w-4 text-xs' : 'w-8 text-sm'} shrink-0 text-center text-gray-400 font-mono`}>
+                {STRING_NAMES[stringIdx]}
+              </div>
+            )}
 
             {Array.from({ length: FRET_COUNT }).map((_, fret) => {
               const note = getNoteAtFret(openNote, fret)
@@ -77,7 +90,7 @@ export function Fretboard({
               return (
                 <div
                   key={fret}
-                  className={`flex-1 h-11 flex items-center justify-center relative border-r border-gray-700 ${
+                  className={`flex-1 ${fretHeight} flex items-center justify-center relative border-r border-gray-700 ${
                     fret === 0 ? 'border-r-2 border-r-gray-400' : ''
                   } ${onFretClick ? 'cursor-pointer group' : ''}`}
                   onClick={() => onFretClick?.(stringIdx, fret)}
@@ -103,7 +116,7 @@ export function Fretboard({
 
                   {colored ? (
                     <div
-                      className={`relative z-10 w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold ${colored.color} text-white ${
+                      className={`relative z-10 ${dotSize} rounded-full flex items-center justify-center text-xs font-bold ${colored.color} text-white ${
                         colored.isRoot && colored.isMainRoot ? 'ring-4 ring-white ring-offset-2 ring-offset-gray-900' : ''
                       }`}
                     >
@@ -111,7 +124,7 @@ export function Fretboard({
                     </div>
                   ) : highlighted ? (
                     <div
-                      className={`relative z-10 w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold transition-transform ${
+                      className={`relative z-10 ${dotSize} rounded-full flex items-center justify-center text-xs font-bold transition-transform ${
                         showOverlapColor && h1 && h2
                           ? 'bg-purple-500 text-white'
                           : h2
@@ -122,11 +135,11 @@ export function Fretboard({
                       {showLabels ? note : ''}
                     </div>
                   ) : active ? (
-                    <div className="relative z-10 w-8 h-8 rounded-full bg-amber-400 text-gray-900 flex items-center justify-center text-xs font-bold ring-2 ring-white ring-offset-1 ring-offset-gray-900 scale-125">
+                    <div className={`relative z-10 ${dotSize} rounded-full bg-amber-400 text-gray-900 flex items-center justify-center text-xs font-bold ring-2 ring-white ring-offset-1 ring-offset-gray-900 scale-125`}>
                       {showLabels ? note : ''}
                     </div>
                   ) : onFretClick ? (
-                    <div className="relative z-10 w-8 h-8 rounded-full border border-transparent group-hover:border-gray-500 transition-colors" />
+                    <div className={`relative z-10 ${dotSize} rounded-full border border-transparent group-hover:border-gray-500 transition-colors`} />
                   ) : (
                     <div className="relative z-10 w-7 h-7" />
                   )}
@@ -137,8 +150,8 @@ export function Fretboard({
         ))}
 
         {/* Bottom fret markers */}
-        <div className="flex mt-1">
-          <div className="w-8 shrink-0" />
+        <div className={`flex ${compact ? 'mt-0.5' : 'mt-1'}`}>
+          {showStringLabels && <div className={`${compact ? 'w-4' : 'w-8'} shrink-0`} />}
           {Array.from({ length: FRET_COUNT }).map((_, fret) => (
             <div key={fret} className="flex-1 flex justify-center gap-1">
               {SINGLE_DOT_FRETS.includes(fret) && (
