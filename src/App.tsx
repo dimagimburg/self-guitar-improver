@@ -197,8 +197,10 @@ function AppRoutes() {
 }
 
 function App() {
+  const basename = import.meta.env.MODE === 'production' ? '/self-guitar-improver/' : '/'
+
   return (
-    <BrowserRouter>
+    <BrowserRouter basename={basename}>
       <AppRoutes />
     </BrowserRouter>
   )
