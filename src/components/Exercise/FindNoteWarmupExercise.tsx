@@ -124,26 +124,38 @@ export function FindNoteWarmupExercise() {
 
       {hoveredIndex !== null && (() => {
         const record = times[hoveredIndex]
-        const stringNote = STANDARD_TUNING[record.string]
         const positions: Array<{ string: number; fret: number }> = []
 
-        for (let fret = 0; fret < 12; fret++) {
-          if (getNoteAtFret(stringNote, fret) === record.note) {
-            positions.push({ string: 0, fret })
+        for (let stringIdx = 0; stringIdx < 6; stringIdx++) {
+          const stringNote = STANDARD_TUNING[stringIdx]
+          for (let fret = 0; fret < 12; fret++) {
+            if (getNoteAtFret(stringNote, fret) === record.note) {
+              positions.push({ string: stringIdx, fret })
+            }
           }
         }
 
         return (
-          <div className="fixed bottom-8 left-8 bg-gray-900 p-4 rounded border border-gray-700 z-50 shadow-lg">
-            <Fretboard
-              highlightedPositions={positions}
-              maxFrets={12}
-              compact={true}
-              showStringLabels={true}
-              tuning={[stringNote]}
-              showLabels={true}
-            />
-          </div>
+          <>
+            <div className="fixed inset-0 bg-black/50 z-40" onClick={() => setHoveredIndex(null)} />
+            <div className="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-gray-900 p-8 rounded-lg border border-gray-600 z-50 shadow-2xl max-w-3xl w-11/12">
+              <div className="mb-6">
+                <h3 className="text-2xl font-bold text-white mb-2">
+                  {NOTE_DISPLAY[record.note] || record.note}
+                </h3>
+                <p className="text-gray-400 text-sm">Positions on fretboard (first 12 frets)</p>
+              </div>
+              <Fretboard
+                highlightedPositions={positions}
+                maxFrets={12}
+                compact={false}
+                showStringLabels={true}
+                tuning={STANDARD_TUNING}
+                showLabels={true}
+              />
+              <p className="text-gray-500 text-xs mt-4 text-center">Click to close</p>
+            </div>
+          </>
         )
       })()}
     </div>
