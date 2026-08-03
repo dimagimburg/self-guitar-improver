@@ -126,24 +126,24 @@ export function FindNoteWarmupExercise() {
         const record = times[hoveredIndex]
         const positions: Array<{ string: number; fret: number }> = []
 
-        for (let stringIdx = 0; stringIdx < 6; stringIdx++) {
-          const stringNote = STANDARD_TUNING[stringIdx]
-          for (let fret = 0; fret < 12; fret++) {
-            if (getNoteAtFret(stringNote, fret) === record.note) {
-              positions.push({ string: stringIdx, fret })
-            }
+        const stringNote = STANDARD_TUNING[record.string]
+        for (let fret = 0; fret < 12; fret++) {
+          if (getNoteAtFret(stringNote, fret) === record.note) {
+            positions.push({ string: record.string, fret })
           }
         }
 
         return (
           <>
-            <div className="fixed inset-0 bg-black/50 z-40" onClick={() => setHoveredIndex(null)} />
-            <div className="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-gray-900 p-8 rounded-lg border border-gray-600 z-50 shadow-2xl max-w-3xl w-11/12">
+            <div className="fixed inset-0 bg-black/50 z-40 pointer-events-auto" onClick={() => setHoveredIndex(null)} />
+            <div className="fixed top-0 left-1/2 -translate-x-1/2 bg-gray-900 p-8 rounded-b-lg border-b border-l border-r border-gray-600 z-50 shadow-2xl max-w-4xl w-11/12 max-h-80 overflow-y-auto"
+              onMouseLeave={() => {}}
+            >
               <div className="mb-6">
-                <h3 className="text-2xl font-bold text-white mb-2">
+                <h3 className="text-3xl font-bold text-emerald-400 mb-2">
                   {NOTE_DISPLAY[record.note] || record.note}
                 </h3>
-                <p className="text-gray-400 text-sm">Positions on fretboard (first 12 frets)</p>
+                <p className="text-gray-400 text-sm">Find on {STRING_NAMES[record.string]}</p>
               </div>
               <Fretboard
                 highlightedPositions={positions}
@@ -153,7 +153,7 @@ export function FindNoteWarmupExercise() {
                 tuning={STANDARD_TUNING}
                 showLabels={true}
               />
-              <p className="text-gray-500 text-xs mt-4 text-center">Click to close</p>
+              <p className="text-gray-500 text-xs mt-4 text-center cursor-pointer hover:text-gray-400" onClick={() => setHoveredIndex(null)}>Click to close</p>
             </div>
           </>
         )
