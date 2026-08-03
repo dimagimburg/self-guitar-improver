@@ -101,8 +101,7 @@ export function FindNoteWarmupExercise() {
                 <div
                   key={idx}
                   className="flex justify-between text-sm text-gray-300 bg-gray-900 p-2 rounded hover:bg-gray-800 cursor-pointer transition-colors"
-                  onMouseEnter={() => setHoveredIndex(idx)}
-                  onMouseLeave={() => setHoveredIndex(null)}
+                  onClick={() => setHoveredIndex(hoveredIndex === idx ? null : idx)}
                 >
                   <span>{NOTE_DISPLAY[record.note] || record.note} on {STRING_NAMES[record.string]}</span>
                   <span className="font-mono text-emerald-400">{record.time.toFixed(2)}s</span>
@@ -136,8 +135,7 @@ export function FindNoteWarmupExercise() {
         return (
           <>
             <div className="fixed inset-0 bg-black/50 z-40 pointer-events-auto" onClick={() => setHoveredIndex(null)} />
-            <div className="fixed top-0 left-1/2 -translate-x-1/2 bg-gray-900 p-8 rounded-b-lg border-b border-l border-r border-gray-600 z-50 shadow-2xl max-w-4xl w-11/12 max-h-80 overflow-y-auto"
-              onMouseLeave={() => {}}
+            <div className="fixed top-0 left-1/2 -translate-x-1/2 bg-gray-900 p-8 rounded-b-lg border-b border-l border-r border-gray-600 z-50 shadow-2xl w-fit"
             >
               <div className="mb-6">
                 <h3 className="text-3xl font-bold text-emerald-400 mb-2">
@@ -145,14 +143,16 @@ export function FindNoteWarmupExercise() {
                 </h3>
                 <p className="text-gray-400 text-sm">Find on {STRING_NAMES[record.string]}</p>
               </div>
-              <Fretboard
-                highlightedPositions={positions}
-                maxFrets={12}
-                compact={false}
-                showStringLabels={true}
-                tuning={STANDARD_TUNING}
-                showLabels={true}
-              />
+              <div className="overflow-x-auto">
+                <Fretboard
+                  highlightedPositions={positions}
+                  maxFrets={12}
+                  compact={false}
+                  showStringLabels={true}
+                  tuning={STANDARD_TUNING}
+                  showLabels={true}
+                />
+              </div>
               <p className="text-gray-500 text-xs mt-4 text-center cursor-pointer hover:text-gray-400" onClick={() => setHoveredIndex(null)}>Click to close</p>
             </div>
           </>
