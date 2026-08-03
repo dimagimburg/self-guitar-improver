@@ -95,7 +95,7 @@ export function FindNoteWarmupExercise() {
             </div>
           </div>
 
-          <div className="max-h-60 overflow-y-auto relative">
+          <div className="max-h-60 overflow-y-auto">
             <div className="space-y-2">
               {times.map((record, idx) => (
                 <div
@@ -109,31 +109,6 @@ export function FindNoteWarmupExercise() {
                 </div>
               ))}
             </div>
-
-            {hoveredIndex !== null && (() => {
-              const record = times[hoveredIndex]
-              const stringNote = STANDARD_TUNING[record.string]
-              const positions: Array<{ string: number; fret: number }> = []
-
-              for (let fret = 0; fret < 12; fret++) {
-                if (getNoteAtFret(stringNote, fret) === record.note) {
-                  positions.push({ string: 0, fret })
-                }
-              }
-
-              return (
-                <div className="absolute right-full mr-4 top-0 bg-gray-900 p-4 rounded border border-gray-700 z-50">
-                  <Fretboard
-                    highlightedPositions={positions}
-                    maxFrets={12}
-                    compact={true}
-                    showStringLabels={true}
-                    tuning={[stringNote]}
-                    showLabels={true}
-                  />
-                </div>
-              )
-            })()}
           </div>
         </div>
       )}
@@ -146,6 +121,31 @@ export function FindNoteWarmupExercise() {
           Stop Exercise
         </button>
       )}
+
+      {hoveredIndex !== null && (() => {
+        const record = times[hoveredIndex]
+        const stringNote = STANDARD_TUNING[record.string]
+        const positions: Array<{ string: number; fret: number }> = []
+
+        for (let fret = 0; fret < 12; fret++) {
+          if (getNoteAtFret(stringNote, fret) === record.note) {
+            positions.push({ string: 0, fret })
+          }
+        }
+
+        return (
+          <div className="fixed bottom-8 left-8 bg-gray-900 p-4 rounded border border-gray-700 z-50 shadow-lg">
+            <Fretboard
+              highlightedPositions={positions}
+              maxFrets={12}
+              compact={true}
+              showStringLabels={true}
+              tuning={[stringNote]}
+              showLabels={true}
+            />
+          </div>
+        )
+      })()}
     </div>
   )
 }
